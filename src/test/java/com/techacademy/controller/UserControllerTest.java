@@ -43,11 +43,30 @@ class UserControllerTest {
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity()).build();
     }
-
+    
     @Test
     @DisplayName("User更新画面")
     @WithMockUser
     void testGetUser() throws Exception {
+        // HTTPリクエストに対するレスポンスの検証
+        MvcResult result = mockMvc.perform(get("/user/update/1/")) // URLにアクセス
+            .andExpect(status().isOk()) // ステータスを確認
+            .andExpect(model().attributeExists("user")) // Modelの内容を確認
+            .andExpect(model().hasNoErrors()) // Modelのエラー有無の確認
+            .andExpect(view().name("user/update")) // viewの確認
+            .andReturn(); // 内容の取得
+
+        // userの検証
+        // Modelからuserを取り出す
+        User user = (User)result.getModelAndView().getModel().get("user");
+        assertEquals(1, user.getId());
+        assertEquals("キラメキ太郎", user.getName());
+    }
+
+    @Test
+    @DisplayName("User更新画面")
+    @WithMockUser
+    void testGet() throws Exception {
         // HTTPリクエストに対するレスポンスの検証
         MvcResult result = mockMvc.perform(get("/user/list")) // URLにアクセス
             .andExpect(status().isOk()) // ステータスを確認
